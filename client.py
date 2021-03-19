@@ -45,7 +45,9 @@ while True:
             assert type(r) is dict , 'Erreur lors du parse du buffer reçu vers JSON'
             assert r is not None # pas de valeur null pour le dictionnaire
             accel = r['acceleration']
+            assert accel is not None
             gyro = r['gyroscope']
+            assert gyro is not None
             # The counter i will increment until it reaches 30, then we will send the data to our real time database.
             # We do this to reduce the number of accesses to the database in order to have better performances
             i += 1

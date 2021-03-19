@@ -1,6 +1,0 @@
-3-	Les renforcements effectués : 
-       Les données d’entrée : Class email et Class mot de passe
-               •	Les champs ne doivent pas être vides,
-               •	Email doit contenir @ et un point(.),
-               •	L’email ne doit pas être déjà existant dans la BDD,
-               •	Mot de passe trop cours.

@@ -17,11 +17,12 @@ config = {
 
 # Create a Firebase objet initialized by our configuration JSON object
 firebase = pyrebase.initialize_app(config)
-
+assert type(firebase) is pyrebase.pyrebase.Firebase , 'L\'objet retourné n\'ai pas de type Firebase'
 # Get a reference to the database service
 db = firebase.database()
-#############################
+assert type(db) is pyrebase.pyrebase.Database , 'L\'objet retourné n\'ai pas de type Database'
 
+#############################
 HOST = '169.254.0.2'  # Host IP
 PORT = 3000  # Host port
 frequency = 30  # Sending frequency
@@ -36,6 +37,7 @@ while True:
     if len(buf) > 0:
         try:
             r = json.loads(buf.decode())  # Decode the buffer object
+            assert type(r) is dict , 'Erreur lors du parse du buffer reçu vers JSON'
             accel = r['acceleration']
             gyro = r['gyroscope']
             # The counter i will increment until it reaches 30, then we will send the data to our real time database.
@@ -48,5 +50,5 @@ while True:
                 # push the data in our database
                 db.child("users/"+userId+'/raspberry').push(r)
                 i = 0
-        except:
-            pass
+        except e:
+            print("Erreur", e)

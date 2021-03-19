@@ -7,6 +7,7 @@ import { IconButton } from "@material-ui/core";
 import ThemeConfig from "../Constantes/Theme";
 import { auth } from "..";
 import { isLoggedIn } from "../Helpers/Auth";
+var assert = require("assert");
 
 if (window.DeviceOrientationEvent) {
   console.log("DeviceOrientation is supported");
@@ -49,45 +50,56 @@ class Home extends React.Component {
     }
   };
   handleMotion = (e, obj) => {
-    if (this.state.recording) {
-      if (new Date() - lastInsert > frequency) {
-        k = firebase
-          .database()
-          .ref("users/" + this.state.uid + "/")
-          .push().key;
+    try {
+      if (this.state.recording) {
+        if (new Date() - lastInsert > frequency) {
+          k = firebase
+            .database()
+            .ref("users/" + this.state.uid + "/")
+            .push().key;
 
-        firebase
-          .database()
-          .ref("users/" + this.state.uid + "/data/" + k)
-          .set({
-            accel: {
-              acceleration: e.acceleration,
-              accelerationIncludingGravity: e.accelerationIncludingGravity,
-              rotationRate: e.rotationRate,
-            },
-            ...obj,
-          });
-        lastInsert = new Date();
-        // update steps
-        var res = Math.sqrt(
-          Math.pow(obj.gyro?.alpha, 2),
-          Math.pow(obj.gyro?.beta, 2),
-          Math.pow(obj.gyro?.gamma, 2)
-        );
-        if (res > 200 && lastInsert) {
-          var dd = new Date().toLocaleDateString().replace(/\//g, "-");
+          assert(e != null, "l'evénement est null");
+          assert(0 <= e.acceleration <= 1, "Plage de valeurs violé ");
+          assert(
+            0 <= e.accelerationIncludingGravity <= 1,
+            "Plage de valeurs violé "
+          );
+          assert(0 <= e.rotationRate <= 1, "Plage de valeurs violé ");
           firebase
             .database()
-            .ref("users/" + this.state.uid + "/profile/steps/" + dd)
-            .once("value", (snapshot) => {
-              var steps = snapshot.val()?.steps || 0;
-              firebase
-                .database()
-                .ref("users/" + this.state.uid + "/profile/steps/" + dd)
-                .update({ steps: steps + 1 });
+            .ref("users/" + this.state.uid + "/data/" + k)
+            .set({
+              accel: {
+                acceleration: e.acceleration,
+                accelerationIncludingGravity: e.accelerationIncludingGravity,
+                rotationRate: e.rotationRate,
+              },
+              ...obj,
             });
+          lastInsert = new Date();
+          // update steps
+          var res = Math.sqrt(
+            Math.pow(obj.gyro?.alpha, 2),
+            Math.pow(obj.gyro?.beta, 2),
+            Math.pow(obj.gyro?.gamma, 2)
+          );
+          if (res > 200 && lastInsert) {
+            var dd = new Date().toLocaleDateString().replace(/\//g, "-");
+            firebase
+              .database()
+              .ref("users/" + this.state.uid + "/profile/steps/" + dd)
+              .once("value", (snapshot) => {
+                var steps = snapshot.val()?.steps || 0;
+                firebase
+                  .database()
+                  .ref("users/" + this.state.uid + "/profile/steps/" + dd)
+                  .update({ steps: steps + 1 });
+              });
+          }
         }
       }
+    } catch (e) {
+      console.log("Erreur", e);
     }
   };
   render() {

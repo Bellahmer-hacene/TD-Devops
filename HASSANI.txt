@@ -1,0 +1,11 @@
+- git checkout feature-auth
+
+Les tests et renforcements du code :
+1) methode uploadImg :
+- Verifier le type du fichier a charger (gif, jpg, jpeg, png)
+- Verifier la taille du fichier a charger (inferieur a 2MB)
+
+2) methode login :
+- Verifier l'email s'il est dans le bon format avec les expressions regulieres Regex
+- On verifier la longueur du mot de passe pour la securite (superieur a 5 caracteres)
+- On verifie le nom et le prenom (String, superieur a 4 caracteres)

@@ -1,6 +1,8 @@
 from sense_hat import SenseHat
 import socket
 import json
+import os
+
 
 # initialize sense hat
 sense = SenseHat()
@@ -9,6 +11,11 @@ sense.set_imu_config(True, True, False)
 # configure socket
 HOST = '169.254.0.2' # Server IP or Hostname
 PORT = 3000 # Pick an open Port (1000+ recommended), must match the client sport
+
+response = os.system("ping -c 1 " + HOST) #ping pour savoir si le serveur disponible ou pas
+
+assert response==0 #si in n'égale pas à 0 , donc on peut pas joindre le serveur
+
 userId = 'Zp7JOtRA93P3R9zxncupVzqyOI53' # Elder Id
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # set options, nodelay, flush after write
@@ -45,17 +52,20 @@ while True:
     # print('received : ' + str(data))
     # get acceleration raw
     acceleration_raw = sense.get_accelerometer_raw()
+    assert acceleration_raw is not None # vérifier que le acceleration_raw n'est pas nulle
     jsonData['userId'] = userId
     jsonData['acceleration_raw']['x'] = round(acceleration_raw['x'], roundWith)
     jsonData['acceleration_raw']['y'] = round(acceleration_raw['y'], roundWith)
     jsonData['acceleration_raw']['z'] = round(acceleration_raw['z'], roundWith)
     # get rotation from acceleration
     acceleration = sense.get_accelerometer()
+    assert acceleration is not None
     jsonData['acceleration']['roll'] = round(acceleration['roll'], roundWith)
     jsonData['acceleration']['pitch'] = round(acceleration['pitch'], roundWith)
     jsonData['acceleration']['yaw'] = round(acceleration['yaw'], roundWith)
     # get gyroscope data
     gyroscope = sense.get_orientation_degrees()
+    assert gyroscope is not None
     jsonData['gyroscope']['roll'] = round(gyroscope['roll'], roundWith)
     jsonData['gyroscope']['pitch'] = round(gyroscope['pitch'], roundWith)
     jsonData['gyroscope']['yaw'] = round(gyroscope['yaw'], roundWith)
@@ -64,6 +74,7 @@ while True:
     jsonData['humidity'] = sense.get_humidity()
 
     events = sense.stick.get_events()
+    assert events is not None
     if len(events)>0:
         for event in events:
             jsonData['stick']['direction'] = event.direction
@@ -74,6 +85,7 @@ while True:
 
     # Sending reply
     data = json.dumps(jsonData)
+    assert data is not None
     if data != stringDataOld:
         # print('sending :', data)
         try:

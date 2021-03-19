@@ -29,7 +29,7 @@ PORT = 3000  # Host port
 frequency = 30  # Sending frequency
 i = 0
 
-response = os.system("ping -c 1 " + hostname)
+response = os.system("ping -c 1 " + HOST)
 
 assert response == 0 # si l'assertio est violé , ca veut dire que la connexion n'est pas établie
 

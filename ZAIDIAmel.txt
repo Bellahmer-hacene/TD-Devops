@@ -1,0 +1,12 @@
+1) - git checkout feature-backend
+2) - Tests unitaires:
+	- assertion
+	- Les exceptions: utilisation de 'Try Except' 
+3)
+- assertion sur la valeur du gyroscope ( doit etre positive)
+- 'Try Except' pour gérer les exceptions au niveau de la connexion des sockets
+
+
+
+
+
